@@ -21,14 +21,20 @@ log4js.configure({
         plugin: {
             appenders: ['console', 'file'],
             level: 'info'
+        },
+        http: {
+            appenders: ['console', 'file'],
+            level: 'info'
         }
     }
 });
 
 const logger = log4js.getLogger();
 const pluginLogger = log4js.getLogger('plugin');
+const httpLogger = log4js.getLogger('http')
 
 export {
     logger,
-    pluginLogger
+    pluginLogger,
+    httpLogger
 };

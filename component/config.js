@@ -34,7 +34,7 @@ async function getConfig() {
         const cfg = await YAML.parse(fs.readFileSync(configPath, 'utf-8'));
         return cfg || {};
     } catch (error) {
-        logger.error(chalk.red('读取插件配置文件失败: ' + error.message));
+        logger.error(chalk.red('读取插件配置文件失败: ' + error));
         return {};
     }
 }

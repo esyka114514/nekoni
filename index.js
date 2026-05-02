@@ -1,9 +1,10 @@
-import { logger, pluginLogger } from '#utils';
-import { pluginManager } from '#lib';
+import { logger, pluginLogger, httpLogger } from '#utils';
+import { pluginManager, httpServiceManager } from '#lib';
 import chalk from 'chalk';
 import { Data } from './component/index.js';
 
 global.pluginLogger = pluginLogger;
+global.httpLogger = httpLogger;
 
 process.title = `${Data.name} v${Data.version} ©2026 ${Data.author}`;
 
@@ -26,7 +27,10 @@ async function main() {
     await pluginManager.loadPlugins();
     pluginManager.startAll();
 
-    if (pluginManager.getAllPlugins().length === 0) {
+    await httpServiceManager.loadHttpServices();
+    httpServiceManager.start();
+
+    if (pluginManager.getAllPlugins().length === 0 && httpServiceManager.getAllServices().length === 0) {
         logger.info(chalk.bgYellow(`未加载任何插件，进程将退出...`));
     } else {
         logger.info(chalk.bgGreen(`服务已启动，耗时：`),

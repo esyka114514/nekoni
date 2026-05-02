@@ -3,7 +3,7 @@ import fs from 'fs'
 import { fileURLToPath } from 'url'
 import YAML from 'yaml'
 import chalk from 'chalk'
-import { logger } from '#utils'
+import { logger } from './logger.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -43,7 +43,7 @@ class Config {
             }
 
         } catch (error) {
-            logger.error(chalk.red('初始化插件配置文件失败: ' + error.message));
+            logger.error(chalk.red('初始化插件配置文件失败: ' + error));
         }
     }
 
@@ -59,7 +59,7 @@ class Config {
             const cfg = await YAML.parse(fs.readFileSync(this.configPath, 'utf-8'));
             return cfg || {};
         } catch (error) {
-            logger.error(chalk.red('读取插件配置文件失败: ' + error.message));
+            logger.error(chalk.red('读取插件配置文件失败: ' + error));
             return {};
         }
     }
@@ -87,7 +87,7 @@ class Config {
 
             await fs.promises.writeFile(this.configPath, YAML.stringify(cfg));
         } catch (error) {
-            logger.error(chalk.red('插件设置配置项失败: ' + error.message));
+            logger.error(chalk.red('插件设置配置项失败: ' + error));
         }
     }
 

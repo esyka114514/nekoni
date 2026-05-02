@@ -14,7 +14,7 @@ async function getData() {
             version: '0.0.0',
         };
     } catch (error) {
-        logger.error(`读取 package.json 失败:`, error.message);
+        logger.error(`读取 package.json 失败:`, error);
         return {
             name: 'unknown',
             version: '0.0.0',
