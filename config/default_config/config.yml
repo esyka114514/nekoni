@@ -1,0 +1,3 @@
+# 插件黑名单（不会执行）
+pluginBlacklist:
+  - example-plugin
