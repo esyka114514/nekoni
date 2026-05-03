@@ -25,6 +25,49 @@ function checkCommand(command) {
 }
 
 /**
+ * 获取当前 commit ID
+ * @returns {string} commit ID
+ */
+function getCommitId() {
+    return execSync('git rev-parse --short HEAD', { encoding: 'utf-8' }).trim();
+}
+
+/**
+ * 获取最新更新时间
+ * @returns {string} 时间字符串
+ */
+function getUpdateTime() {
+    return execSync('git log -1 --oneline --pretty=format:"%cd" --date=format:"%m-%d %H:%M"', { encoding: 'utf-8' }).trim();
+}
+
+/**
+ * 获取更新日志
+ * @param {string} oldCommitId - 更新前的 commit ID
+ * @returns {string} 更新日志
+ */
+function getUpdateLog(oldCommitId) {
+    const logAll = execSync('git log -20 --oneline --pretty=format:"%h||[%cd] %s" --date=format:"%F %T"', { encoding: 'utf-8' });
+    
+    if (!logAll) return '';
+    
+    // 修复：trim() 去除末尾换行，避免 split 产生空字符串
+    const logs = logAll.trim().split('\n');
+    const log = [];
+    
+    for (const str of logs) {
+        // 防御：跳过空行（双重保险）
+        if (!str) continue;
+        const [commitId, message] = str.split('||');
+        // message 可能为 undefined，增加判断防止崩溃
+        if (!message || message.includes('Merge branch')) continue;
+        if (commitId === oldCommitId) break;
+        log.push(message);
+    }
+    
+    return log.join('\n');
+}
+
+/**
  * 递归合并配置项
  * 以 newObj 为准，oldObj 中独有的键会补充进去
  * @param {Object} newObj - 新配置对象（优先级更高）
@@ -67,17 +110,24 @@ try {
     const oldPackageJson = fs.readFileSync(packageJsonPath, 'utf-8');
     fs.writeFileSync(packageJsonBakPath, oldPackageJson);
     logger.info('已备份 package.json 到 package.json.bak');
-    fs.unlinkSync(packageJsonPath)
 } catch (error) {
     logger.error(`备份 package.json 失败: ${error.message}`);
     process.exit(1);
 }
 
-// 3. 使用 git 拉取仓库
+// 3. 获取更新前信息
+const oldCommitId = getCommitId();
+logger.info(`当前版本: ${oldCommitId}`);
+
+// 4. 使用 git 强制拉取仓库
 logger.info('正在拉取最新代码...')
 
 try {
-    execSync('git pull', { stdio: 'inherit' });
+    const branch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf-8' }).trim();
+    logger.info(`当前分支: ${branch}`);
+    
+    execSync('git fetch --all', { stdio: 'inherit' });
+    execSync(`git reset --hard origin/${branch}`, { stdio: 'inherit' });
     logger.info('代码拉取完成');
 } catch (error) {
     logger.error(`代码拉取失败: ${error.message}`);
@@ -87,7 +137,24 @@ try {
     process.exit(1);
 }
 
-// 4. 使用原 package.json 递归修补新的 package.json
+// 5. 检查是否有更新
+const newCommitId = getCommitId();
+const updateTime = getUpdateTime();
+
+if (oldCommitId === newCommitId) {
+    logger.info(`Nekoni已是最新版本\n最后更新时间: ${updateTime}`);
+    fs.unlinkSync(packageJsonBakPath);
+    process.exit(0);
+}
+
+logger.info(`Nekoni已更新\n最后更新时间: ${updateTime}`);
+
+const updateLog = getUpdateLog(oldCommitId);
+if (updateLog) {
+    logger.info('更新日志:\n' + updateLog);
+}
+
+// 6. 使用原 package.json 递归修补新的 package.json
 logger.info('正在合并 package.json...')
 
 try {
@@ -105,7 +172,7 @@ try {
     process.exit(1);
 }
 
-// 5. 安装依赖
+// 7. 安装依赖
 logger.info('正在安装依赖...')
 
 try {
@@ -116,7 +183,7 @@ try {
     process.exit(1);
 }
 
-// 6. 清理备份文件
+// 8. 清理备份文件
 try {
     fs.unlinkSync(packageJsonBakPath);
     logger.info('已清理备份文件');
