@@ -143,6 +143,9 @@ const updateTime = getUpdateTime();
 
 if (oldCommitId === newCommitId) {
     logger.info(`Nekoni已是最新版本\n最后更新时间: ${updateTime}`);
+    const oldPackageJson = JSON.parse(fs.readFileSync(packageJsonBakPath, 'utf-8'));
+    fs.writeFileSync(packageJsonPath, JSON.stringify(oldPackageJson, null, 2) + '\n');
+    logger.info('已回滚 package.json 到备份版本');
     fs.unlinkSync(packageJsonBakPath);
     process.exit(0);
 }
