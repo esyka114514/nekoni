@@ -1,14 +1,16 @@
 {
-  "name": "Esyka's backend",
-  "version": "1.0.0",
-  "description": "拿来跑重功能的后端",
+  "name": "Nekoni",
+  "version": "1.0.1",
+  "description": "自动化执行脚本及启动http服务的框架",
   "license": "MIT",
   "author": "Esyka",
   "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "init": "node init.js",
+    "update": "node update.js"
   },
   "imports": {
     "#utils": "./utils/index.js",
@@ -22,6 +24,7 @@
     "js-yaml": "^4.1.1",
     "log4js": "^6.9.1",
     "node-schedule": "^2.1.1",
+    "nodemailer": "^8.0.7",
     "yaml": "^2.8.3"
   }
 }

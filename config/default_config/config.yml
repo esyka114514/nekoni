@@ -8,3 +8,19 @@ pluginBlacklist:
 # HTTP服务黑名单（不会自动启动）
 httpServiceBlacklist:
   - example-service
+
+# 通知配置
+notification:
+  email:
+    use: false
+    host: smtp.example.com
+    port: 465
+    secure: true
+    user: your@email.com
+    password: your-password
+    to: recipient@email.com
+  
+  gotify:
+    use: false
+    url: https://gotify.example.com
+    token: your-gotify-token

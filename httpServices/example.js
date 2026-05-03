@@ -27,4 +27,15 @@ router.post('/config', async (req, res) => {
     res.json({ success: true, key, value })
 })
 
+router.get('/send', async (req, res) => {
+    const result = await sendMessage({
+        title: 'Test message',
+        message: '这是一封测试测试',
+    })
+    res.status(result ? 200 : 500).json({
+        message: 'Hello, World!',
+        success: result
+    })
+})
+
 export default router

@@ -8,6 +8,10 @@
 /plugins/*
 !/plugins/example.js
 
+# Services
+/httpServices/*
+!/httpServices/example.js
+
 # Logs
 logs
 *.log
