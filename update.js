@@ -144,6 +144,7 @@ const updateTime = getUpdateTime();
 if (oldCommitId === newCommitId) {
     logger.info(`Nekoni已是最新版本\n最后更新时间: ${updateTime}`);
     fs.unlinkSync(packageJsonBakPath);
+    process.exit(0);
 }
 
 logger.info(`Nekoni已更新\n最后更新时间: ${updateTime}`);
