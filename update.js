@@ -67,6 +67,7 @@ try {
     const oldPackageJson = fs.readFileSync(packageJsonPath, 'utf-8');
     fs.writeFileSync(packageJsonBakPath, oldPackageJson);
     logger.info('已备份 package.json 到 package.json.bak');
+    fs.unlinkSync(packageJsonPath)
 } catch (error) {
     logger.error(`备份 package.json 失败: ${error.message}`);
     process.exit(1);
