@@ -7,7 +7,7 @@ pluginBlacklist:
 
 # HTTP服务黑名单（不会自动启动）
 httpServiceBlacklist:
-  - example-service
+  - example
 
 # 通知配置
 notification:
