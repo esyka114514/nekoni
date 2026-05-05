@@ -1,10 +1,10 @@
-import path from 'path'
+import { dirname, join } from 'path'
 import fs from 'fs'
 import { fileURLToPath } from 'url'
 import { logger } from '#utils';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const packageInfoPath = path.join(__dirname, '../package.json')
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const packageInfoPath = join(__dirname, '../package.json')
 
 async function getData() {
     try {

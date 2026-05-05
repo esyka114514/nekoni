@@ -1,12 +1,12 @@
 import { logger } from './utils/logger.js'
 import fs from 'fs'
-import path from 'path'
+import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { execSync } from 'child_process'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const packageJsonPath = path.join(__dirname, 'package.json');
-const packageJsonBakPath = path.join(__dirname, 'package.json.bak');
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const packageJsonPath = join(__dirname, 'package.json');
+const packageJsonBakPath = join(__dirname, 'package.json.bak');
 
 logger.info('开始更新Nekoni...')
 

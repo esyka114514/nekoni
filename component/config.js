@@ -1,22 +1,22 @@
 import fs from 'fs';
 import YAML from 'yaml';
-import path from 'path';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import chalk from 'chalk';
 import chokidar from 'chokidar';
 import { logger } from '#utils';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const defaultConfigPath = path.join(__dirname, '../config/default_config/config.yml');
-const configPath = path.join(__dirname, '../config/config/config.yml');
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const defaultConfigPath = join(__dirname, '../config/default_config/config.yml');
+const configPath = join(__dirname, '../config/config/config.yml');
 
 if (!fs.existsSync(defaultConfigPath)) {
     logger.error(chalk.red('未找到默认配置文件，请尝试重新拉取项目'));
     process.exit(1);
 }
 
-if (!fs.existsSync(path.dirname(configPath))) {
-    fs.mkdirSync(path.dirname(configPath), { recursive: true });
+if (!fs.existsSync(dirname(configPath))) {
+    fs.mkdirSync(dirname(configPath), { recursive: true });
 }
 
 if (!fs.existsSync(configPath)) {

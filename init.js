@@ -1,12 +1,12 @@
 import { logger } from './utils/logger.js'
 import fs from 'fs'
-import path from 'path'
+import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import YAML from 'yaml'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const defaultConfigPath = path.join(__dirname, './config/default_config/config.yml');
-const configPath = path.join(__dirname, './config/config/config.yml');
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const defaultConfigPath = join(__dirname, './config/default_config/config.yml');
+const configPath = join(__dirname, './config/config/config.yml');
 
 logger.info('开始初始化Nekoni...')
 
@@ -17,7 +17,7 @@ if (!fs.existsSync(defaultConfigPath)) {
 
 if (!fs.existsSync(configPath)) {
     try {
-        fs.mkdirSync(path.dirname(configPath), { recursive: true });
+        fs.mkdirSync(dirname(configPath), { recursive: true });
         fs.copyFileSync(defaultConfigPath, configPath);
         logger.info('已创建默认配置文件');
     } catch (error) {

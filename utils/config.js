@@ -1,11 +1,11 @@
-import path from 'path'
+import { dirname, join } from 'path'
 import fs from 'fs'
 import { fileURLToPath } from 'url'
 import YAML from 'yaml'
 import chalk from 'chalk'
 import { logger } from './logger.js'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 /**
  * 插件配置类
@@ -19,7 +19,7 @@ class Config {
         name = 'undefined-plugin',
         options = {}
     ) {
-        this.configPath = path.join(__dirname, `../config/config/plugins/${name}.yml`);
+        this.configPath = join(__dirname, `../config/config/plugins/${name}.yml`);
         this.name = name;
         this.options = {
             name,
@@ -34,8 +34,8 @@ class Config {
                 return
             }
 
-            if (!fs.existsSync(path.dirname(this.configPath))) {
-                fs.mkdirSync(path.dirname(this.configPath), { recursive: true });
+            if (!fs.existsSync(dirname(this.configPath))) {
+                fs.mkdirSync(dirname(this.configPath), { recursive: true });
             }
 
             if (!fs.existsSync(this.configPath)) {
