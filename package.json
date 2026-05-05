@@ -1,6 +1,6 @@
 {
   "name": "Nekoni",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "自动化执行脚本及启动http服务的框架",
   "license": "MIT",
   "author": "Esyka",

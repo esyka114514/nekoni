@@ -35,7 +35,7 @@ async function main() {
     if (pluginManager.getAllPlugins().length === 0 && httpServiceManager.getAllServices().length === 0) {
         logger.info(chalk.bgYellow(`未加载任何插件或服务，进程将退出...`));
     } else {
-        logger.info(chalk.bgGreen(`服务已启动，耗时：`),
+        logger.info(chalk.bgGreen(`Nekoni已启动，耗时：`),
             chalk.yellow(`${((Date.now() - startTime) / 1000).toFixed(2)}`),
             chalk.bgGreen('秒')
         );
@@ -49,7 +49,7 @@ main().catch(error => {
 
 for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
     process.on(signal, () => {
-        logger.info(chalk.bgRed(`收到 ${signal} 信号，正在关闭服务...`));
+        logger.info(chalk.bgRed(`收到 ${signal} 信号，正在关闭${Data.name} v${Data.version}...`));
         pluginManager.stopAll();
         if (Config.watcher) {
             Config.watcher.close();
