@@ -2,11 +2,13 @@ import { logger, pluginLogger, httpLogger } from '#utils';
 import { pluginManager, httpServiceManager } from '#lib';
 import chalk from 'chalk';
 import { Data } from './component/index.js';
+import Config from './component/config.js';
 
 global.pluginLogger = pluginLogger;
 global.httpLogger = httpLogger;
 
 process.title = `${Data.name} v${Data.version} ©2026 ${Data.author}`;
+process.env.TZ = "Asia/Shanghai"
 
 async function main() {
     const startTime = Date.now();
@@ -45,14 +47,19 @@ main().catch(error => {
     process.exit(1);
 });
 
-process.on('SIGINT', () => {
-    logger.info(chalk.bgRed(`收到SIGINT信号，停止定时任务`));
-    pluginManager.stopAll();
-    logger.info(
-        chalk.bgGreen(`本次运行时长：`),
-        chalk.yellow(`${process.uptime().toFixed(2)}`),
-        chalk.bgGreen('秒')
-    );
-    logger.info(chalk.bgBlue(`${Data.name} v${Data.version} 已停止`));
-    process.exit(0);
-});
+for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
+    process.on(signal, () => {
+        logger.info(chalk.bgRed(`收到 ${signal} 信号，正在关闭服务...`));
+        pluginManager.stopAll();
+        if (Config.watcher) {
+            Config.watcher.close();
+        }
+        logger.info(
+            chalk.bgGreen(`本次运行时长：`),
+            chalk.yellow(`${process.uptime().toFixed(2)}`),
+            chalk.bgGreen('秒')
+        );
+        logger.info(chalk.bgBlue(`${Data.name} v${Data.version} 已停止`));
+        process.exit(0);
+    });
+}

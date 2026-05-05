@@ -3,6 +3,7 @@ import YAML from 'yaml';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import chalk from 'chalk';
+import chokidar from 'chokidar';
 import { logger } from '#utils';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -15,30 +16,58 @@ if (!fs.existsSync(defaultConfigPath)) {
 }
 
 if (!fs.existsSync(path.dirname(configPath))) {
-    fs.mkdirSync(path.dirname(configPath),  { recursive: true });
+    fs.mkdirSync(path.dirname(configPath), { recursive: true });
 }
 
-/**
- * 初始化插件配置文件
- */
 if (!fs.existsSync(configPath)) {
     fs.copyFileSync(defaultConfigPath, configPath);
 }
 
 /**
- * 读取配置文件
- * @returns {Object} 配置项的键值对对象
+ * 配置管理器（热重载）
  */
-async function getConfig() {
-    try {
-        const cfg = await YAML.parse(fs.readFileSync(configPath, 'utf-8'));
-        return cfg || {};
-    } catch (error) {
-        logger.error(chalk.red('读取插件配置文件失败: ' + error));
-        return {};
+class ConfigManager {
+    constructor() {
+        this.config = {};
+        this.watcher = null;
+        this.reload();
+        this.watch();
+
+        return new Proxy(this, {
+            get: (target, prop) => {
+                if (prop in target) return target[prop];
+                return target.config[prop];
+            }
+        });
+    }
+
+    reload() {
+        try {
+            const raw = fs.readFileSync(configPath, 'utf-8');
+            this.config = YAML.parse(raw) || {};
+        } catch (error) {
+            logger.error(chalk.red('读取主配置文件失败: ') + error.message);
+        }
+    }
+
+    watch() {
+        this.watcher = chokidar.watch(configPath, { ignoreInitial: true });
+        this.watcher.on('change', () => {
+            this.reload();
+            logger.mark(chalk.green('[主配置文件已重载]'));
+        });
+    }
+
+    get(key) {
+        if (!key) return this.config;
+        return key.split('.').reduce((obj, k) => obj?.[k], this.config);
+    }
+
+    getAll() {
+        return this.config;
     }
 }
 
-const config = await getConfig();
+const cfg = new ConfigManager();
 
-export default config;
+export default cfg;
