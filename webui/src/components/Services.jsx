@@ -54,10 +54,9 @@ function Services() {
             <div key={index} className="list-item">
               <div>
                 <div className="list-item-name">{service.name}</div>
-                <div className="list-item-meta">类型: {service.type}</div>
               </div>
-              <span className={`badge ${httpServerRunning ? 'badge-running' : 'badge-stopped'}`}>
-                {httpServerRunning ? '活跃' : '未激活'}
+              <span className={`badge ${service.running ? 'badge-running' : 'badge-stopped'}`}>
+                {service.running ? '活跃' : '未激活'}
               </span>
             </div>
           ))
