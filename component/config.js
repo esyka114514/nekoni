@@ -21,6 +21,60 @@ if (!fs.existsSync(dirname(configPath))) {
 
 if (!fs.existsSync(configPath)) {
     fs.copyFileSync(defaultConfigPath, configPath);
+    logger.info(chalk.green('已创建默认配置文件'));
+}
+
+function findMissingKeys(defaultObj, currentObj, prefix = '') {
+    const missing = [];
+
+    for (const key of Object.keys(defaultObj)) {
+        const fullPath = prefix ? `${prefix}.${key}` : key;
+
+        if (!(key in currentObj)) {
+            missing.push(fullPath);
+            continue;
+        }
+
+        if (typeof defaultObj[key] === 'object' && defaultObj[key] !== null && !Array.isArray(defaultObj[key])) {
+            const nestedMissing = findMissingKeys(defaultObj[key], currentObj[key], fullPath);
+            missing.push(...nestedMissing);
+        }
+    }
+
+    return missing;
+}
+
+function mergeMissingKeys(defaultObj, currentObj) {
+    const result = { ...currentObj };
+
+    for (const key of Object.keys(defaultObj)) {
+        if (!(key in result)) {
+            result[key] = defaultObj[key];
+        } else if (typeof defaultObj[key] === 'object' && defaultObj[key] !== null && !Array.isArray(defaultObj[key])) {
+            result[key] = mergeMissingKeys(defaultObj[key], result[key]);
+        }
+    }
+
+    return result;
+}
+
+try {
+    const defaultConfig = YAML.parse(fs.readFileSync(defaultConfigPath, 'utf-8'));
+    const currentConfig = YAML.parse(fs.readFileSync(configPath, 'utf-8')) || {};
+
+    const missingKeys = findMissingKeys(defaultConfig, currentConfig);
+
+    if (missingKeys.length > 0) {
+        logger.warn(chalk.yellow('发现以下配置项缺失：'));
+        missingKeys.forEach(key => logger.warn(`  - ${key}`));
+        logger.info(chalk.green('正在自动修补缺失的配置项...'));
+
+        const mergedConfig = mergeMissingKeys(defaultConfig, currentConfig);
+        fs.writeFileSync(configPath, YAML.stringify(mergedConfig));
+        logger.info(chalk.green('已自动修补缺失的配置项'));
+    }
+} catch (error) {
+    logger.error(chalk.red('检测配置项失败: ') + error.message);
 }
 
 /**

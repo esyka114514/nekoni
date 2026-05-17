@@ -32,8 +32,8 @@ async function main() {
     await httpServiceManager.loadHttpServices();
     httpServiceManager.start();
 
-    if (pluginManager.getAllPlugins().length === 0 && httpServiceManager.getAllServices().length === 0) {
-        logger.info(chalk.bgYellow(`未加载任何插件或服务，进程将退出...`));
+    if (!(pluginManager.getAllPlugins().length > 0) && !(httpServiceManager.getAllServices().length > 0)) {
+        logger.info(chalk.bgYellow(`未加载任何插件或服务，WebUI 已启用`));
     } else {
         logger.info(chalk.bgGreen(`Nekoni已启动，耗时：`),
             chalk.yellow(`${((Date.now() - startTime) / 1000).toFixed(2)}`),

@@ -1,16 +1,21 @@
 {
   "name": "Nekoni",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "自动化执行脚本及启动http服务的框架",
   "license": "MIT",
   "author": "Esyka",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/esyka114514/nekoni"
+  },
   "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "init": "node init.js",
-    "update": "node update.js"
+    "update": "node update.js",
+    "webui:dev": "cd webui && pnpm dev",
+    "webui:build": "cd webui && pnpm build"
   },
   "imports": {
     "#utils": "./utils/index.js",
