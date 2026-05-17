@@ -33,7 +33,7 @@ async function main() {
     httpServiceManager.start();
 
     if (!(pluginManager.getAllPlugins().length > 0) && !(httpServiceManager.getAllServices().length > 0)) {
-        logger.info(chalk.bgYellow(`未加载任何插件或服务，WebUI 已启用`));
+        logger.info(chalk.bgYellow(`未加载任何插件或服务，WebUI 仍在允许`));
     } else {
         logger.info(chalk.bgGreen(`Nekoni已启动，耗时：`),
             chalk.yellow(`${((Date.now() - startTime) / 1000).toFixed(2)}`),
