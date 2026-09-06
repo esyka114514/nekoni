@@ -1,5 +1,5 @@
 # HTTP服务
-httpPort: 3000
+httpPort: 8080
 httpAuthKey: my-secret-key
 
 # 插件黑名单（不会执行）
